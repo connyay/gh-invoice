@@ -31,7 +31,7 @@ function parsePayload(payload) {
         if (format === 'm') {
             time = time / 60;
         }
-        entry + time;
+        entry += time;
     };
     return entry;
 }
