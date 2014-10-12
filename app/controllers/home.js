@@ -5,7 +5,8 @@ var express = require('express'),
     TimeEntry = mongoose.model('TimeEntry'),
     Repo = mongoose.model('Repo');
 
-var TIME_REGEX = /:clock\d{1,4}: (\d{1,})([m|h])(?:(?:.* )(\d{1,})([m|h]))?/;
+var TIME_REGEX = /:clock\d{1,4}: (\d{1,})([m|h])(?:(?:.* )(\d{1,})([m|h]))?/;,
+FREE_REGEX = /:clock\d{1,4}: :free:/;
 
 function validateReq(req, repo) {
     return true;
@@ -18,7 +19,11 @@ function validateReq(req, repo) {
 }
 
 function parsePayload(payload) {
-    var matches = TIME_REGEX.exec(payload.comment.body);
+    var matches = FREE_REGEX;
+    if (matches && matches.length) {
+        return 'Free';
+    }
+    matches = TIME_REGEX.exec(payload.comment.body);
     var entry = 0;
     for (var i = 1; i < matches.length; i++) {
         var match = matches[i];

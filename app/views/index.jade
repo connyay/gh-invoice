@@ -1,5 +1,11 @@
 extends layout
 
+mixin pluralize(value, single, other)
+  -string=other
+  if(value==1)
+    -string=single
+  =string
+
 block content
   h1= title
 
@@ -9,4 +15,5 @@ block content
     ul
       - each entry in repo.timeEntries
         li
-          | #{entry.issue} &mdash; #{entry.hours} hours
+          | #{entry.issue} &mdash; #{entry.hours}#{' '}
+          +pluralize(entry.hours, 'hour', 'hours')
