@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express'),
   config = require('./config/config'),
   glob = require('glob'),
@@ -10,9 +11,7 @@ db.on('error', function () {
 });
 
 var models = glob.sync(config.root + '/app/models/*.js');
-models.forEach(function (model) {
-  require(model);
-});
+models.forEach(require);
 var app = express();
 
 require('./config/express')(app, config);

@@ -15,7 +15,7 @@ block content
     ul
       - each entry in repo.timeEntries
         li
-          a(href=entry.issue.url)
+          a(href=entry.issue.html_url)
             | #{entry.issue.title} ##{entry.issue.number}#{' '}
           | &mdash;#{' '}
           if(entry.hours == 'Free')
