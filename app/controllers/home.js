@@ -67,7 +67,7 @@ router.post('/hook', function(req, res, next) {
             console.log('good to go, store it.');
             new TimeEntry({
                 hours: hours,
-                issue: payload.issue.url
+                issue: payload.issue.html_url
             }).save(function(err, entry) {
                 repo.timeEntries.push(entry);
                 repo.save(function() {
