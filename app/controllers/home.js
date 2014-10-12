@@ -28,6 +28,12 @@ function parsePayload(payload) {
     }
 }
 
+function isPing(req) {
+    if(req.get('x-gitHub-event') === 'ping') {
+        return true;
+    }
+}
+
 module.exports = function(app) {
     app.use('/', router);
 };
@@ -47,7 +53,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/hook', function(req, res, next) {
     var payload = req.body;
-    if (!payload) {
+    if (!payload || isPing(req)) {
         return res.end();
     }
     var hours = parsePayload(payload);
