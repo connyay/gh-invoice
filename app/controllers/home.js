@@ -19,11 +19,12 @@ function validateReq(req, repo) {
 }
 
 function parsePayload(payload) {
-    var matches = FREE_REGEX;
+    var comment = payload.comment.body;
+    var matches = FREE_REGEX.exec(comment);
     if (matches && matches.length) {
         return 'Free';
     }
-    matches = TIME_REGEX.exec(payload.comment.body);
+    matches = TIME_REGEX.exec(comment);
     var entry = 0;
     for (var i = 1; i < matches.length; i++) {
         var match = matches[i];

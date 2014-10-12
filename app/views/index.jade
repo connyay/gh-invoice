@@ -15,5 +15,9 @@ block content
     ul
       - each entry in repo.timeEntries
         li
-          | #{entry.issue} &mdash; #{entry.hours}#{' '}
-          +pluralize(entry.hours, 'hour', 'hours')
+          | #{entry.issue} &mdash;#{' '}
+          if(entry.hours == 'Free')
+            | Free
+          else
+            | #{entry.hours}#{' '}
+            +pluralize(entry.hours, 'hour', 'hours')
