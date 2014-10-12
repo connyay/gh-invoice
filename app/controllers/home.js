@@ -30,6 +30,7 @@ function parsePayload(payload) {
 
 function isPing(req) {
     if(req.get('x-gitHub-event') === 'ping') {
+        console.log(req.body);
         return true;
     }
 }
