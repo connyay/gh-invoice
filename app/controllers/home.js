@@ -28,7 +28,7 @@ function parsePayload(payload) {
         var time = parseFloat(match, 10);
         var format = matches[++i];
         if (format === 'm') {
-            time = (time / 60).toFixed(2);
+            time = +((time / 60).toFixed(2));
         }
         entry += time;
     };
