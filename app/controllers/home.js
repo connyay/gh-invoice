@@ -5,6 +5,8 @@ var express = require('express'),
     TimeEntry = mongoose.model('TimeEntry'),
     Repo = mongoose.model('Repo');
 
+var TIME_REGEX = /:clock\d{1,4}: (\d{1,9})([m|h]) ?(\d{1,9})?([m|h])?/;
+
 function validateReq(req, repo) {
     return true;
     var sig = ('sha1=' + crypto.createHmac('sha1', repo.secret).update(JSON.stringify(req.body)).digest('hex'));
@@ -16,20 +18,26 @@ function validateReq(req, repo) {
 }
 
 function parsePayload(payload) {
-    var entryMatches = payload.comment.body.match(/(:clock\d{1,4}:)(.*\d)(m|h)/);
-    if (entryMatches && entryMatches.length && entryMatches.length === 4) {
-        var time = parseFloat(entryMatches[2], 10);
-        var format = entryMatches[3];
+    var comment = payload.comment.body;
+    var matches = TIME_REGEX.exec(comment);
+    var entry = 0;
+    for (var i = 0; i < matches.length; i++) {
+        var match = matches[i];
+        if (!match || match === comment) {
+            continue;
+        }
+        var time = parseFloat(match, 10);
+        var format = matches[++i];
         if (format === 'm') {
             time = time / 60;
-            ''
         }
-        return time;
-    }
+        entry + time;
+    };
+    return entry;
 }
 
 function isPing(req) {
-    if(req.get('x-gitHub-event') === 'ping') {
+    if (req.get('x-gitHub-event') === 'ping') {
         console.log(req.body);
         return true;
     }
@@ -42,14 +50,14 @@ module.exports = function(app) {
 router.get('/', function(req, res, next) {
 
     Repo.find()
-    .populate('timeEntries')
-    .exec(function(err, repos) {
-        if (err) return next(err);
-        res.render('index', {
-            title: 'Generator-Express MVC',
-            repos: repos
+        .populate('timeEntries')
+        .exec(function(err, repos) {
+            if (err) return next(err);
+            res.render('index', {
+                title: 'Generator-Express MVC',
+                repos: repos
+            });
         });
-    });
 });
 
 router.post('/hook', function(req, res, next) {
