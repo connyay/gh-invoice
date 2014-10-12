@@ -8,9 +8,10 @@ var config = {
     app: {
       name: 'gh-invoice'
     },
+    ip: '127.0.0.1',
     port: 3000,
     db: 'mongodb://localhost/gh-invoice-development'
-    
+
   },
 
   test: {
@@ -18,9 +19,10 @@ var config = {
     app: {
       name: 'gh-invoice'
     },
+    ip: '127.0.0.1',
     port: 3000,
     db: 'mongodb://localhost/gh-invoice-test'
-    
+
   },
 
   production: {
@@ -28,9 +30,10 @@ var config = {
     app: {
       name: 'gh-invoice'
     },
-    port: 3000,
-    db: 'mongodb://localhost/gh-invoice-production'
-    
+    ip: process.env.OPENSHIFT_NODEDIY_IP,
+    port: process.env.OPENSHIFT_NODEDIY_PORT,
+    db: (process.env.OPENSHIFT_MONGODB_DB_URL + process.env.OPENSHIFT_APP_NAME)
+
   }
 };
 

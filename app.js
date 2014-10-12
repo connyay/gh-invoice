@@ -17,5 +17,5 @@ var app = express();
 
 require('./config/express')(app, config);
 
-app.listen(config.port);
+app.listen(config.port, config.ip);
 
