@@ -18,18 +18,17 @@ function validateReq(req, repo) {
 }
 
 function parsePayload(payload) {
-    var comment = payload.comment.body;
-    var matches = TIME_REGEX.exec(comment);
+    var matches = TIME_REGEX.exec(payload.comment.body);
     var entry = 0;
-    for (var i = 0; i < matches.length; i++) {
+    for (var i = 1; i < matches.length; i++) {
         var match = matches[i];
-        if (!match || match === comment) {
+        if (!match) {
             continue;
         }
         var time = parseFloat(match, 10);
         var format = matches[++i];
         if (format === 'm') {
-            time = time / 60;
+            time = (time / 60).toFixed(2);
         }
         entry += time;
     };
