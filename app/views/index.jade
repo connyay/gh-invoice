@@ -10,7 +10,7 @@ block content
   h1= title
 
   - each repo in repos
-    p
+    p(title=repo.secret)
       strong= repo.name
     ul
       - each entry in repo.timeEntries
