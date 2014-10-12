@@ -2,6 +2,11 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
 
-  = repos
+  - each repo in repos
+    p
+      strong= repo.name
+    ul
+      - each entry in repo.timeEntries
+        li
+          | #{entry.issue} &mdash; #{entry.hours} hours

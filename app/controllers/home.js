@@ -54,7 +54,7 @@ router.get('/', function(req, res, next) {
         .exec(function(err, repos) {
             if (err) return next(err);
             res.render('index', {
-                title: 'Generator-Express MVC',
+                title: 'GH Invoice',
                 repos: repos
             });
         });
