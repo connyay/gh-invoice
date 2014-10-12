@@ -2,11 +2,13 @@ var express = require('express'),
     crypto = require('crypto'),
     router = express.Router(),
     mongoose = require('mongoose'),
+    async = require('async'),
     TimeEntry = mongoose.model('TimeEntry'),
+    Issue = mongoose.model('Issue'),
     Repo = mongoose.model('Repo');
 
 var TIME_REGEX = /:clock\d{1,4}: (\d{1,})([m|h])(?:(?:.* )(\d{1,})([m|h]))?/,
-FREE_REGEX = /:clock\d{1,4}: :free:/;
+    FREE_REGEX = /:clock\d{1,4}: :free:/;
 
 function validateReq(req, repo) {
     return true;
@@ -56,12 +58,20 @@ router.get('/', function(req, res, next) {
 
     Repo.find()
         .populate('timeEntries')
-        .exec(function(err, repos) {
-            if (err) return next(err);
-            res.render('index', {
-                title: 'GH Invoice',
-                repos: repos
+        .exec()
+        .then(function(repos) {
+            var iter = function(repo, callback) {
+                TimeEntry.populate(repo.timeEntries, {
+                    path: 'issue'
+                }, callback);
+            };
+            async.each(repos, iter, function done(err) {
+                res.render('index', {
+                    title: 'GH Invoice',
+                    repos: repos
+                });
             });
+
         });
 });
 
@@ -84,16 +94,22 @@ router.post('/hook', function(req, res, next) {
             return res.end();
         }
         if (validateReq(req, repo)) {
-            console.log('good to go, store it.');
-            new TimeEntry({
-                hours: hours,
-                issue: payload.issue.html_url
-            }).save(function(err, entry) {
-                repo.timeEntries.push(entry);
-                repo.save(function() {
-                    res.end();
-                })
+            Issue.findOneAndUpdate({
+                id: payload.issue.id
+            }, payload.issue, {
+                upsert: true
+            }, function(err, issue) {
+                new TimeEntry({
+                    hours: hours,
+                    issue: issue
+                }).save(function(err, entry) {
+                    repo.timeEntries.push(entry);
+                    repo.save(function() {
+                        res.end();
+                    })
+                });
             });
+
         } else {
             console.log('mismatch?');
             res.end();

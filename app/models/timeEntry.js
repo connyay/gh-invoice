@@ -3,7 +3,10 @@ var mongoose = require('mongoose'),
 
 var TimeEntrySchema = new Schema({
     hours: String,
-    issue: String,
+    issue: {
+        type: Schema.Types.ObjectId,
+        ref: 'Issue'
+    },
     date: {
         type: Date,
         default: Date.now
